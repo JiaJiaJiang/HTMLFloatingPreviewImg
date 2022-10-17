@@ -59,6 +59,7 @@ class FloatingPreviewImg{
 	constructor(opts={}){
 		opts=Object.assign({id:`el_floatingPreviewImg_${Math.random()*0xffffffff|0}`},opts);
 		this._previewImg.id=opts.id;
+		delete opts.id;
 		this._previewImg.style.cssText=
 		`display:block;
 		z-index: 99999999999;
