@@ -1,4 +1,4 @@
-# HTMLFloatingPreviewImg
+# html-FloatingPreviewImg
 
 Show a floating image for small image preview
 

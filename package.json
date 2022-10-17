@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JiaJiaJiang/HTMLFloatingPreviewImg.git"
+    "url": "git+https://github.com/JiaJiaJiang/html-FloatingPreviewImg.git"
   },
   "keywords": [
     "image",
@@ -21,9 +21,9 @@
   "author": "luojia@luojia.me",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JiaJiaJiang/HTMLFloatingPreviewImg/issues"
+    "url": "https://github.com/JiaJiaJiang/html-FloatingPreviewImg/issues"
   },
-  "homepage": "https://github.com/JiaJiaJiang/HTMLFloatingPreviewImg#readme",
+  "homepage": "https://github.com/JiaJiaJiang/html-FloatingPreviewImg#readme",
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.4",
