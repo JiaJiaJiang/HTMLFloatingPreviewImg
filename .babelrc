@@ -3,11 +3,14 @@
 	  [
 		"@babel/preset-env",
 		{
-		  "modules": false,
-		  "useBuiltIns": "usage",
-		  "debug": false,
-		  "corejs":3
+			"targets":{
+				"browsers":"cover 85%"
+			},
+			"modules": false,
+			"useBuiltIns": "usage",
+			"debug": false,
+			"corejs":3
 		}
 	  ]
 	]
-  }
+}
