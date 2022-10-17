@@ -1,6 +1,6 @@
 {
   "name": "floatingpreviewimg",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "show a floating image for small image preview",
   "main": "src/index.js",
   "scripts": {
