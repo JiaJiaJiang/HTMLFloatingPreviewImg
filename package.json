@@ -1,0 +1,35 @@
+{
+  "name": "floatingpreviewimg",
+  "version": "1.0.0",
+  "description": "show a floating image for small image preview",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JiaJiaJiang/HTMLFloatingPreviewImg.git"
+  },
+  "keywords": [
+    "image",
+    "preview",
+    "javascript",
+    "html"
+  ],
+  "type": "module",
+  "author": "luojia@luojia.me",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JiaJiaJiang/HTMLFloatingPreviewImg/issues"
+  },
+  "homepage": "https://github.com/JiaJiaJiang/HTMLFloatingPreviewImg#readme",
+  "devDependencies": {
+    "@babel/core": "^7.19.3",
+    "@babel/preset-env": "^7.19.4",
+    "@rollup/plugin-babel": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "core-js": "^3.25.5",
+    "rollup": "^3.1.0"
+  }
+}
