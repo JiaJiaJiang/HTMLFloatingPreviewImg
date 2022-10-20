@@ -2,6 +2,10 @@
 
 Show a floating image for small image preview
 
+## Preview
+
+![](floatingpreviewimg-preview.webp)
+
 ## Get
 
 ### 1. Directly use dist/FloatingPreviewImg.js
