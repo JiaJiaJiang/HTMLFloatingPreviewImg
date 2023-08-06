@@ -67,6 +67,7 @@
       _defineProperty(this, "_showingSource", null);
       _defineProperty(this, "_cachedInfo", void 0);
       _defineProperty(this, "_previewImg", document.createElement('img'));
+      _defineProperty(this, "_highResImg", document.createElement('img'));
       _defineProperty(this, "targetSize", 500);
       _defineProperty(this, "maxSize", 500);
       _defineProperty(this, "minScale", 1);
@@ -99,16 +100,19 @@
      *show preview for the image
      *
      * @param {Image} sourceImg
+     * @param {string} highResSrc high resolution version image src
      */
-    async show(sourceImg) {
+    async show(sourceImg, highResSrc) {
       if (this._previewImg.isConnected === false) {
         document.body.appendChild(this._previewImg);
       }
       if (sourceImg.complete === false) return; //ignore not loaded images
-      const sourceInfo = this._showingSource === sourceImg ? this._cachedInfo : typeof this.sourceInfoFunc === 'function' ? await this.sourceInfoFunc(sourceImg) : {
+      const sourceInfo = this._showingSource === sourceImg ? this._cachedInfo : {
         width: sourceImg.width,
         height: sourceImg.height,
-        src: sourceImg.src
+        src: sourceImg.src,
+        highResSrc: highResSrc,
+        ...(typeof this.sourceInfoFunc === 'function' ? await this.sourceInfoFunc(sourceImg) : {})
       };
       if (!sourceInfo) return;
       this._showingSource = sourceImg;
@@ -124,10 +128,18 @@
         preWidth = rawWidth * scale,
         preHeight = rawHeight * scale;
       this._previewImg.style.opacity = '1';
-      if (this._previewImg.src !== src) {
+      if (this._previewImg.src !== src && sourceInfo.highResSrc ? this._previewImg.src !== sourceInfo.highResSrc : true) {
         this._previewImg.src = src;
         this._previewImg.style.width = preWidth + 'px';
         this._previewImg.style.height = preHeight + 'px';
+        if (sourceInfo.highResSrc) {
+          this._highResImg.onload = () => {
+            if (this._previewImg.src === src) {
+              this._previewImg.src = sourceInfo.highResSrc;
+            }
+          };
+          this._highResImg.src = sourceInfo.highResSrc;
+        }
       }
       const pos = sourceImg.getBoundingClientRect();
       let {

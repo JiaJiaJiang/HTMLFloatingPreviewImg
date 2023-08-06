@@ -1,26 +1,27 @@
-window.addEventListener('mousemove',e=>{
-	for(let c of FloatingPreviewImg.activePreviews){
-		try{
+window.addEventListener('mousemove', e => {
+	for (let c of FloatingPreviewImg.activePreviews) {
+		try {
 			let el;
-			if(el=c.shouldShow(e.target)){
+			if (el = c.shouldShow(e.target)) {
 				c.show(el);
-			}else{
-				if(c._showingSource)c.hide();
+			} else {
+				if (c._showingSource) c.hide();
 			}
-		}catch(err){console.error(err);}
+		} catch (err) { console.error(err); }
 	}
 });
 
-class FloatingPreviewImg{
-	static activePreviews=new Set();
-	get id(){return this._previewImg.id;}
-	_showingSource=null;
+class FloatingPreviewImg {
+	static activePreviews = new Set();
+	get id() { return this._previewImg.id; }
+	_showingSource = null;
 	_cachedInfo;
-	_previewImg=document.createElement('img');
-	targetSize=500;
-	maxSize=500;
-	minScale=1;
-	marign=20;
+	_previewImg = document.createElement('img');
+	_highResImg = document.createElement('img');
+	targetSize = 500;
+	maxSize = 500;
+	minScale = 1;
+	marign = 20;
 	/**
 	 *Function for providing image info,
 	 *if a function set, the preview image will get image info from this function instead of the source image
@@ -37,10 +38,10 @@ class FloatingPreviewImg{
 	 * @param {HTMLElement} el the event target element from mousemove event
 	 * @returns {HTMLElement|undefined} return the image element for showing preview
 	 */
-	shouldShow(el){
-		let target=e.target;
-		if(target.localName==='img'
-			&& target.hasAttribute('showPreview')){
+	shouldShow(el) {
+		let target = e.target;
+		if (target.localName === 'img'
+			&& target.hasAttribute('showPreview')) {
 			return el;
 		}
 		return;
@@ -56,12 +57,12 @@ class FloatingPreviewImg{
 	 * @param {function(HTMLImageElement):{width,height,src}} [opts.sourceInfoFunc]
 	 * @param {function(HTMLElement):HTMLElement|undefined} [opts.shouldShow]
 	 */
-	constructor(opts={}){
-		opts=Object.assign({id:`el_floatingPreviewImg_${Math.random()*0xffffffff|0}`},opts);
-		this._previewImg.id=opts.id;
+	constructor(opts = {}) {
+		opts = Object.assign({ id: `el_floatingPreviewImg_${Math.random() * 0xffffffff | 0}` }, opts);
+		this._previewImg.id = opts.id;
 		delete opts.id;
-		this._previewImg.style.cssText=
-		`display:block;
+		this._previewImg.style.cssText =
+			`display:block;
 		z-index: 99999999999;
 		transform:translate3d(0, 0, 0);
 		position:fixed;
@@ -73,9 +74,9 @@ class FloatingPreviewImg{
 		height:0;
 		width:0;
 		transition:width .1s,height .1s,transform .1s,opacity .05s;`;
-		for(let o in opts){
-			if(o.startsWith('_')||o in this === false)continue;
-			this[o]=opts[o];
+		for (let o in opts) {
+			if (o.startsWith('_') || o in this === false) continue;
+			this[o] = opts[o];
 		}
 		FloatingPreviewImg.activePreviews.add(this);
 	}
@@ -83,89 +84,100 @@ class FloatingPreviewImg{
 	 *show preview for the image
 	 *
 	 * @param {Image} sourceImg
+	 * @param {string} highResSrc high resolution version image src
 	 */
-	async show(sourceImg){
-		if(this._previewImg.isConnected===false){
+	async show(sourceImg, highResSrc) {
+		if (this._previewImg.isConnected === false) {
 			document.body.appendChild(this._previewImg);
 		}
-		if(sourceImg.complete===false)return;//ignore not loaded images
-		const sourceInfo=this._showingSource===sourceImg
-							?this._cachedInfo
-							:(typeof this.sourceInfoFunc==='function'
-								?await this.sourceInfoFunc(sourceImg)
-								:{
-									width:sourceImg.width,
-									height:sourceImg.height,
-									src:sourceImg.src,
-								});
-		if(!sourceInfo)return;
-		this._showingSource=sourceImg;
-		this._cachedInfo=sourceInfo;
-		const rawWidth=sourceInfo.width,rawHeight=sourceInfo.height,src=sourceInfo.src;
-		if(rawWidth>this.maxSize || rawHeight>this.maxSize)return;//ignore big enough images
-		const marign=this.marign,
-			  wWidth=window.innerWidth,
-			  wHeight=window.innerHeight,
-			  scale=Math.max(Math.min(this.targetSize/rawWidth,this.targetSize/rawHeight),this.minScale),
-			  preWidth=rawWidth*scale,
-			  preHeight=rawHeight*scale;
-		this._previewImg.style.opacity='1';
-		if(this._previewImg.src!==src){
-			this._previewImg.src=src;
-			this._previewImg.style.width=preWidth+'px';
-			this._previewImg.style.height=preHeight+'px';
+		if (sourceImg.complete === false) return;//ignore not loaded images
+		const sourceInfo = this._showingSource === sourceImg
+			? this._cachedInfo
+			: {
+				width: sourceImg.width,
+				height: sourceImg.height,
+				src: sourceImg.src,
+				highResSrc: highResSrc,
+				...(typeof this.sourceInfoFunc === 'function'
+					? await this.sourceInfoFunc(sourceImg)
+					: {})
+			};
+		if (!sourceInfo) return;
+		this._showingSource = sourceImg;
+		this._cachedInfo = sourceInfo;
+		const rawWidth = sourceInfo.width, rawHeight = sourceInfo.height, src = sourceInfo.src;
+		if (rawWidth > this.maxSize || rawHeight > this.maxSize) return;//ignore big enough images
+		const marign = this.marign,
+			wWidth = window.innerWidth,
+			wHeight = window.innerHeight,
+			scale = Math.max(Math.min(this.targetSize / rawWidth, this.targetSize / rawHeight), this.minScale),
+			preWidth = rawWidth * scale,
+			preHeight = rawHeight * scale;
+		this._previewImg.style.opacity = '1';
+		if (this._previewImg.src !== src && sourceInfo.highResSrc ? (this._previewImg.src !== sourceInfo.highResSrc) : true) {
+			this._previewImg.src = src;
+			this._previewImg.style.width = preWidth + 'px';
+			this._previewImg.style.height = preHeight + 'px';
+			if (sourceInfo.highResSrc) {
+				this._highResImg.onload = () => {
+					if (this._previewImg.src === src) {
+						this._previewImg.src = sourceInfo.highResSrc;
+					}
+				};
+				this._highResImg.src = sourceInfo.highResSrc;
+			}
 		}
-		const pos=sourceImg.getBoundingClientRect();
-		let {top,left,bottom,right}=pos;
-		bottom=wHeight-bottom;
-		right=wWidth-right;
-		const targetCenter=[left+rawWidth/2,top+rawHeight/2];
+		const pos = sourceImg.getBoundingClientRect();
+		let { top, left, bottom, right } = pos;
+		bottom = wHeight - bottom;
+		right = wWidth - right;
+		const targetCenter = [left + rawWidth / 2, top + rawHeight / 2];
 		//find out the largest free space
-		const areas=[['top',top],['bottom',bottom],['left',left],['right',right]].sort((a,b)=>b[1]-a[1]);
-		let x,y;
-		switch(areas[0][0]){
+		const areas = [['top', top], ['bottom', bottom], ['left', left], ['right', right]].sort((a, b) => b[1] - a[1]);
+		let x, y;
+		switch (areas[0][0]) {
 			case 'top':
-				x=targetCenter[0]-preWidth/2;
-				y=top-marign-preHeight;
+				x = targetCenter[0] - preWidth / 2;
+				y = top - marign - preHeight;
 				break;
 			case 'bottom':
-				x=targetCenter[0]-preWidth/2;
-				y=top+rawHeight+marign;
+				x = targetCenter[0] - preWidth / 2;
+				y = top + rawHeight + marign;
 				break;
 			case 'left':
-				x=left-marign-preWidth;
-				y=targetCenter[1]-preHeight/2;
+				x = left - marign - preWidth;
+				y = targetCenter[1] - preHeight / 2;
 				break;
 			case 'right':
-				x=left+rawWidth+marign;
-				y=targetCenter[1]-preHeight/2;
+				x = left + rawWidth + marign;
+				y = targetCenter[1] - preHeight / 2;
 				break;
 		}
 		//adjust overflow
-		let offset=0;
-		if((offset=x+preWidth-wWidth)>0){
-			x-=offset+marign;
+		let offset = 0;
+		if ((offset = x + preWidth - wWidth) > 0) {
+			x -= offset + marign;
 		}
-		if((offset=y+preHeight-wHeight)>0){
-			y-=offset+marign;
+		if ((offset = y + preHeight - wHeight) > 0) {
+			y -= offset + marign;
 		}
-		if(x<0)x=marign;
-		if(y<0)y=marign;
-		this._previewImg.style.transform=`translate3d(${x}px, ${y}px, 0)`;
+		if (x < 0) x = marign;
+		if (y < 0) y = marign;
+		this._previewImg.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 	}
 	/**
 	 *hide preview image
 	 */
-	hide(){
-		this._showingSource=null;
-		this._previewImg.style.opacity='0';
+	hide() {
+		this._showingSource = null;
+		this._previewImg.style.opacity = '0';
 	}
-	close(){
-		if(this._previewImg.isConnected){
+	close() {
+		if (this._previewImg.isConnected) {
 			this._previewImg.parentNode.removeChild(this._previewImg);
 		}
-		this._showingSource=null;
-		this._previewImg=null;
+		this._showingSource = null;
+		this._previewImg = null;
 		FloatingPreviewImg.activePreviews.delete(this);
 	}
 }
