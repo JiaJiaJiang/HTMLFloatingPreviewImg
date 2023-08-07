@@ -32,19 +32,20 @@ new FloatingPreviewImg({
 	targetSize:500, //a size for preview to fit in
 	maxSize:500, //images larger than this size will be ignored
 	minScale:1, //when targetSize divides source image's size is lower than this value, will use this scale
-	marign:20, //margin of the floating image to the screen
+	marign:20, //margin of the floating image to the viewport
 	/**
 	 *Function for providing image info,
 	 *if a function set, the preview image will get image info from this function instead of the source image
-	 *this function should return an object of {width,height,src}
+	 *this function should return an object of {width,height,src,highResSrc},props that are not defined here will filled by defaults
 	 * @param {HTMLImageElement} sourceImg
-	 * @returns {{width,height,src}}
+	 * @returns {{width,height,src,highResSrc}}
 	 */
 	sourceInfoFunc(ele){ 
 		return {
 			width:ele.width,
 			height:ele.height,
 			src:ele.src,
+			highResSrc:highResolutionImageUSrc||undefined,
 		};
 	},
 	/**
