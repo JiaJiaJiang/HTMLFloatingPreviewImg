@@ -3,7 +3,7 @@ window.addEventListener('mousemove', e => {
 		try {
 			let el;
 			if (el = c.shouldShow(e.target)) {
-				c.show(el);
+				c.show(el, el.highResSrc);
 			} else {
 				if (c._showingSource) c.hide();
 			}
